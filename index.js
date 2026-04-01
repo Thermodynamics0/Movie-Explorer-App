@@ -5,11 +5,16 @@ const IMG_URL = "https://image.tmdb.org/t/p/w500";
 const grid = document.getElementById("movie-grid");
 const searchInput = document.getElementById("search");
 const watchlistDiv = document.getElementById("watchlist");
+const genreBar = document.getElementById("genre-bar");
 
-// Fetch popular movies
-async function fetchMovies() {
+let currentGenre = "";
+
+// Fetch popular movies (optionally by genre)
+async function fetchMovies(genreId = "") {
   try {
-    const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
+    let url = `${BASE_URL}/movie/popular?api_key=${API_KEY}`;
+    if (genreId) url += `&with_genres=${genreId}`;
+    const res = await fetch(url);
     const data = await res.json();
     displayMovies(data.results);
   } catch (err) {
@@ -36,12 +41,24 @@ function displayMovies(movies) {
   });
 }
 
+// Genre filter
+genreBar.addEventListener("click", (e) => {
+  const btn = e.target.closest(".genre-btn");
+  if (!btn) return;
+
+  document.querySelectorAll(".genre-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  currentGenre = btn.dataset.id;
+  fetchMovies(currentGenre);
+});
+
 // Search movies
 searchInput.addEventListener("input", async (e) => {
   const query = e.target.value;
 
   if (query === "") {
-    fetchMovies();
+    fetchMovies(currentGenre);
     return;
   }
 
