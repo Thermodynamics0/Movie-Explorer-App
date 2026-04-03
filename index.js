@@ -6,19 +6,32 @@ const grid = document.getElementById("movie-grid");
 const searchInput = document.getElementById("search");
 const watchlistDiv = document.getElementById("watchlist");
 const genreBar = document.getElementById("genre-bar");
+const ratingFilter = document.getElementById("rating-filter");
+const spinner = document.getElementById("spinner");
 
 let currentGenre = "";
+let minRating = 0;
+
+// Show / hide spinner
+function setLoading(on) {
+  if (on) { spinner.classList.remove("hidden"); grid.innerHTML = ""; }
+  else     { spinner.classList.add("hidden"); }
+}
 
 // Fetch popular movies (optionally by genre)
 async function fetchMovies(genreId = "") {
+  setLoading(true);
   try {
     let url = `${BASE_URL}/movie/popular?api_key=${API_KEY}`;
     if (genreId) url += `&with_genres=${genreId}`;
     const res = await fetch(url);
     const data = await res.json();
-    displayMovies(data.results);
+    const filtered = data.results.filter(m => m.vote_average >= minRating);
+    displayMovies(filtered);
   } catch (err) {
     console.error(err);
+  } finally {
+    setLoading(false);
   }
 }
 
@@ -31,10 +44,10 @@ function displayMovies(movies) {
     card.classList.add("movie-card");
 
     card.innerHTML = `
-      <img src="${IMG_URL + movie.poster_path}" />
+      <img src="${IMG_URL + movie.poster_path}" alt="${movie.title}" loading="lazy" />
       <h3>${movie.title}</h3>
-      <p>⭐ ${movie.vote_average}</p>
-      <button onclick="addToWatchlist('${movie.title}')">+ Watchlist</button>
+      <p>⭐ ${movie.vote_average.toFixed(1)}</p>
+      <button onclick="addToWatchlist('${movie.title.replace(/'/g,"\\'")}')">+ Watchlist</button>
     `;
 
     grid.appendChild(card);
@@ -53,20 +66,34 @@ genreBar.addEventListener("click", (e) => {
   fetchMovies(currentGenre);
 });
 
+// Rating filter
+ratingFilter.addEventListener("change", () => {
+  minRating = parseFloat(ratingFilter.value);
+  fetchMovies(currentGenre);
+});
+
 // Search movies
 searchInput.addEventListener("input", async (e) => {
-  const query = e.target.value;
+  const query = e.target.value.trim();
 
   if (query === "") {
     fetchMovies(currentGenre);
     return;
   }
 
-  const res = await fetch(
-    `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`
-  );
-  const data = await res.json();
-  displayMovies(data.results);
+  setLoading(true);
+  try {
+    const res = await fetch(
+      `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+    );
+    const data = await res.json();
+    const filtered = data.results.filter(m => m.vote_average >= minRating);
+    displayMovies(filtered);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
 });
 
 // Watchlist
@@ -85,13 +112,13 @@ function renderWatchlist() {
   let list = JSON.parse(localStorage.getItem("watchlist")) || [];
 
   if (list.length === 0) {
-    watchlistDiv.innerHTML = "<p>No movies saved</p>";
+    watchlistDiv.innerHTML = "<p style='color:#64748b;font-size:0.9rem;'>No movies saved</p>";
     return;
   }
 
   watchlistDiv.innerHTML = list.map((movie, i) => `
-    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-      <span>${movie}</span>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
+      <span style="font-size:0.88rem; line-height:1.3;">${movie}</span>
       <button onclick="removeMovie(${i})">❌</button>
     </div>
   `).join("");
