@@ -1,5 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+  --bg: #0f172a;
+  --surface: rgba(30,41,59,0.7);
+  --border: rgba(255,255,255,0.06);
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --accent: #38bdf8;
+}
+
+[data-theme="light"] {
+  --bg: #f1f5f9;
+  --surface: rgba(255,255,255,0.85);
+  --border: rgba(0,0,0,0.08);
+  --text: #1e293b;
+  --muted: #64748b;
+  --accent: #0284c7;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,9 +26,10 @@
 
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: #0f172a;
-  color: #e2e8f0;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
 }
 
 .container {
@@ -58,8 +77,34 @@ input::placeholder {
 }
 
 input:focus {
-  border-color: #38bdf8;
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.theme-btn:hover {
+  background: rgba(255,255,255,0.12);
+  transform: scale(1.1);
 }
 
 /* ──────────────── Genre Bar ──────────────── */

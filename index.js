@@ -8,9 +8,23 @@ const watchlistDiv = document.getElementById("watchlist");
 const genreBar = document.getElementById("genre-bar");
 const ratingFilter = document.getElementById("rating-filter");
 const spinner = document.getElementById("spinner");
+const themeToggle = document.getElementById("theme-toggle");
 
 let currentGenre = "";
 let minRating = 0;
+
+// ──────── Theme Toggle ────────
+const savedTheme = localStorage.getItem("theme") || "dark";
+document.documentElement.setAttribute("data-theme", savedTheme);
+themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+
+themeToggle.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
+  themeToggle.textContent = next === "dark" ? "☀️" : "🌙";
+});
 
 // Show / hide spinner
 function setLoading(on) {
