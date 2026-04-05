@@ -12,6 +12,26 @@ const themeToggle = document.getElementById("theme-toggle");
 
 let currentGenre = "";
 let minRating = 0;
+let currentPage = 1;
+let totalPages = 1;
+
+const prevBtn  = document.getElementById("prev-page");
+const nextBtn  = document.getElementById("next-page");
+const pageInfo = document.getElementById("page-info");
+
+// ──────── Pagination Controls ────────
+prevBtn.addEventListener("click", () => {
+  if (currentPage > 1) { currentPage--; fetchMovies(currentGenre); }
+});
+nextBtn.addEventListener("click", () => {
+  if (currentPage < totalPages) { currentPage++; fetchMovies(currentGenre); }
+});
+
+function updatePagination() {
+  pageInfo.textContent = `Page ${currentPage} / ${totalPages}`;
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage >= totalPages;
+}
 
 // ──────── Theme Toggle ────────
 const savedTheme = localStorage.getItem("theme") || "dark";
@@ -36,12 +56,15 @@ function setLoading(on) {
 async function fetchMovies(genreId = "") {
   setLoading(true);
   try {
-    let url = `${BASE_URL}/movie/popular?api_key=${API_KEY}`;
+    let url = `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${currentPage}`;
     if (genreId) url += `&with_genres=${genreId}`;
     const res = await fetch(url);
     const data = await res.json();
+    totalPages = Math.min(data.total_pages, 20); // cap at 20 pages
     const filtered = data.results.filter(m => m.vote_average >= minRating);
     displayMovies(filtered);
+    updatePagination();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   } catch (err) {
     console.error(err);
   } finally {
@@ -77,12 +100,14 @@ genreBar.addEventListener("click", (e) => {
   btn.classList.add("active");
 
   currentGenre = btn.dataset.id;
+  currentPage = 1;
   fetchMovies(currentGenre);
 });
 
 // Rating filter
 ratingFilter.addEventListener("change", () => {
   minRating = parseFloat(ratingFilter.value);
+  currentPage = 1;
   fetchMovies(currentGenre);
 });
 

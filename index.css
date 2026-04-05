@@ -293,3 +293,44 @@ aside button:hover {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ──────────────── Pagination ──────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  padding-bottom: 40px;
+}
+
+.page-btn {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+  transform: scale(1.04);
+}
+
+.page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-weight: 500;
+  min-width: 80px;
+  text-align: center;
+}
