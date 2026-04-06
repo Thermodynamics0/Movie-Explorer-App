@@ -70,6 +70,24 @@
 
   </div>
 
+  <!-- Movie Detail Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <button id="modal-close" class="modal-close">&times;</button>
+      <div class="modal-body">
+        <img id="modal-poster" src="" alt="" />
+        <div class="modal-info">
+          <h2 id="modal-title"></h2>
+          <p class="modal-meta" id="modal-meta"></p>
+          <p class="modal-overview" id="modal-overview"></p>
+          <div class="modal-actions">
+            <button id="modal-watchlist-btn" class="modal-wl-btn">+ Add to Watchlist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="index.js"></script>
 </body>
 </html>

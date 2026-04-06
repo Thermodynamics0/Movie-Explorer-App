@@ -84,9 +84,10 @@ function displayMovies(movies) {
       <img src="${IMG_URL + movie.poster_path}" alt="${movie.title}" loading="lazy" />
       <h3>${movie.title}</h3>
       <p>⭐ ${movie.vote_average.toFixed(1)}</p>
-      <button onclick="addToWatchlist('${movie.title.replace(/'/g,"\\'")}')">+ Watchlist</button>
+      <button onclick="event.stopPropagation(); addToWatchlist('${movie.title.replace(/'/g,"\\'")}')">+ Watchlist</button>
     `;
 
+    card.addEventListener("click", () => openModal(movie));
     grid.appendChild(card);
   });
 }
@@ -174,3 +175,32 @@ function removeMovie(index) {
 // Init
 fetchMovies();
 renderWatchlist();
+
+// ──────── Modal ────────
+const modalOverlay  = document.getElementById("modal-overlay");
+const modalClose    = document.getElementById("modal-close");
+const modalPoster   = document.getElementById("modal-poster");
+const modalTitle    = document.getElementById("modal-title");
+const modalMeta     = document.getElementById("modal-meta");
+const modalOverview = document.getElementById("modal-overview");
+const modalWlBtn    = document.getElementById("modal-watchlist-btn");
+
+function openModal(movie) {
+  modalPoster.src   = movie.poster_path ? IMG_URL + movie.poster_path : "";
+  modalPoster.alt   = movie.title;
+  modalTitle.textContent    = movie.title;
+  modalMeta.textContent     = `⭐ ${movie.vote_average.toFixed(1)}  •  📅 ${movie.release_date || "N/A"}`;
+  modalOverview.textContent = movie.overview || "No description available.";
+  modalWlBtn.onclick = () => { addToWatchlist(movie.title); closeModal(); };
+  modalOverlay.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  modalOverlay.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+modalClose.addEventListener("click", closeModal);
+modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
