@@ -151,6 +151,10 @@ function addToWatchlist(title) {
 function renderWatchlist() {
   let list = JSON.parse(localStorage.getItem("watchlist")) || [];
 
+  // Update badge
+  const badge = document.getElementById("wl-count");
+  if (badge) badge.textContent = list.length;
+
   if (list.length === 0) {
     watchlistDiv.innerHTML = "<p style='color:#64748b;font-size:0.9rem;'>No movies saved</p>";
     return;
@@ -163,6 +167,14 @@ function renderWatchlist() {
     </div>
   `).join("");
 }
+
+// Clear all watchlist
+function clearWatchlist() {
+  localStorage.removeItem("watchlist");
+  renderWatchlist();
+}
+
+document.getElementById("clear-watchlist").addEventListener("click", clearWatchlist);
 
 // Remove movie
 function removeMovie(index) {

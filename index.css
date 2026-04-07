@@ -245,6 +245,45 @@ aside button:hover {
   background: rgba(239,68,68,0.12);
 }
 
+.watchlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.wl-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+.clear-btn {
+  background: transparent !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239,68,68,0.3) !important;
+  padding: 4px 10px !important;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s !important;
+}
+
+.clear-btn:hover {
+  background: rgba(239,68,68,0.12) !important;
+}
+
 /* ──────────────── Rating Filter ──────────────── */
 .filter-bar {
   display: flex;
